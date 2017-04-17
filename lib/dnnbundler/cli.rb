@@ -1,5 +1,6 @@
-require "zipFileGenerator"
+require "dnnbundler/zipFileGenerator"
 require "thor"
+require "json"
 
 module Dnnbundler
     class CLI < Thor
@@ -9,7 +10,6 @@ module Dnnbundler
             puts "Build with config #{config}"
             file = File.read(config)
             data_hash = JSON.parse(file)
-            # puts "file: #{data_hash}, #{data_hash["files"]}"
 
             input_entries = data_hash["entries"]
             ignore_entries = data_hash["excludeEntries"]
