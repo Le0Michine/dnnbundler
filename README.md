@@ -22,7 +22,31 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+To configure packaging create a json config with the following schema:
+
+    {
+        "entries": [
+            "path_to_file"
+            "path_to_directory",
+            {
+                "type": "file",
+                "name": "test.json"
+            },
+            {
+                "type": "zip",
+                "name": "test.zip",
+                "entries": [
+                    "file",
+                    "dir",
+                    ...
+                ]
+            }
+        ],
+        "excludeEntries": [
+            ".DS_Store"
+        ],
+        "outFileName": "out.zip"
+    }
 
 ## Development
 
