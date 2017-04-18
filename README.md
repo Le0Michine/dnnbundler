@@ -25,6 +25,7 @@ Or install it yourself as:
 To configure packaging create a json config with the following schema:
 
     {
+        "name": "out.zip",
         "entries": [
             "path_to_file",
             "path_to_directory",          // real path in file system to file or directory
@@ -36,6 +37,7 @@ To configure packaging create a json config with the following schema:
             {
                 "type": "zip",            // nested zip archive
                 "name": "test.zip",       // name of nested zip archive, can include directories
+                "ignoreEntries": [ ... ]  // local array of entries to ignore
                 "entries": [              // array of entries for nested zip file, same format as above
                     "file",
                     "dir",
@@ -43,10 +45,9 @@ To configure packaging create a json config with the following schema:
                 ]
             }
         ],
-        "excludeEntries": [
+        "ignoreEntries": [
             ".DS_Store"
-        ],
-        "outFileName": "out.zip"
+        ]
     }
 
 to create package run:

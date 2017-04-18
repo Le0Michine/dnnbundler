@@ -1,28 +1,30 @@
 require "dnnbundler/fileEntryType"
 require "dnnbundler/fileEntry"
+require "dnnbundler/jsonConfig"
 require "zip"
 
 module Dnnbundler
     class ZipFileGenerator
         # Initialize with the directory to zip and the location of the output archive.
-        def initialize(entries, ignore_entries, output_file)
-            @entries = entries
-            @ignore_entries = ignore_entries
-            @output_file = output_file
+        def initialize(data)
+            @entries = data[JsonConfig::Entries]
+            @ignore_entries = data[JsonConfig::IgnoreEntries]
+            @output_file = data[JsonConfig::Name]
         end
 
         # Zip the input directory.
         def write
-            buffer = create_zip @entries
+            buffer = create_zip @entries, @ignore_entries
             File.open(@output_file, "wb") {|f| f.write buffer.string }
         end
 
         private
 
-        # True if +fileEntry+ isn't included into +@ignore_entries+ array'
-        def filter_entries(fileEntry)
-            @ignore_entries.each do |entry|
-                return false if fileEntry.name.include? entry
+        # True if +fileEntry+ isn't included into +ignore_entries+ array'
+        def filter_entries(fileEntry, ignore_entries)
+            return true if ignore_entries == nil
+            ignore_entries.each do |entry|
+                return false if (fileEntry.type.casecmp(FileEntryType::FILE) != 0) && (fileEntry.name.include? entry)
             end
         end
 
@@ -64,7 +66,7 @@ module Dnnbundler
             puts "#{ entries.map{ |x| x.name + ", " + x.path.to_s }.join("\n")}"
             buffer = Zip::File.add_buffer do |zio|
                 entries.each do |file|
-                    if file.type == FileEntryType::FILE
+                    if file.type.casecmp(FileEntryType::FILE) == 0
                         zio.add(file.path == nil ? file.name : file.path, file.name)
                     else
                         zio.get_output_stream(file.path == nil ? file.name : file.path) { |os| os.write file.buffer.string }
@@ -74,18 +76,18 @@ module Dnnbundler
         end
 
         # Creates from json array of entries
-        def create_zip(entries)
+        def create_zip(entries, ignore_entries)
             compress entries.map { |x|
                 if x.is_a? String
                     get_entries x, nil
-                elsif x["type"].casecmp(FileEntryType::FILE) == 0
-                    get_entries x["name"], x["path"]
-                elsif x["type"].casecmp(FileEntryType::ZIP) == 0
-                    zip_file_entry = FileEntry.new x["name"], FileEntryType::ZIP, false, x["path"]
-                    zip_file_entry.add_buffer create_zip x["entries"]
+                elsif x[JsonConfig::Type].casecmp(FileEntryType::FILE) == 0
+                    get_entries x[JsonConfig::Name], x[JsonConfig::Path]
+                elsif x[JsonConfig::Type].casecmp(FileEntryType::ZIP) == 0
+                    zip_file_entry = FileEntry.new x[JsonConfig::Name], FileEntryType::ZIP, false, x[JsonConfig::Path]
+                    zip_file_entry.add_buffer create_zip x[JsonConfig::Entries], x[JsonConfig::IgnoreEntries]
                     result = zip_file_entry
                 end
-            }.flatten.select{ |f| filter_entries f }.uniq{ |f| f.name }
+            }.flatten.select{ |f| filter_entries f, ignore_entries }.uniq{ |f| f.name }
         end
     end
 end

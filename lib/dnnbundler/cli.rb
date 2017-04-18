@@ -14,7 +14,7 @@ module Dnnbundler
             input_entries = data_hash["entries"]
             ignore_entries = data_hash["excludeEntries"]
             zip_file_name = data_hash["outFileName"]
-            generator = ZipFileGenerator.new(input_entries, ignore_entries, zip_file_name)
+            generator = ZipFileGenerator.new(data_hash)
             generator.write
         end
     end
