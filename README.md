@@ -26,16 +26,17 @@ To configure packaging create a json config with the following schema:
 
     {
         "entries": [
-            "path_to_file"
-            "path_to_directory",
+            "path_to_file",
+            "path_to_directory",          // real path in file system to file or directory
             {
-                "type": "file",
-                "name": "test.json"
+                "type": "file",           // type of entry
+                "name": "test.json",      // real path in file system to file or directory
+                "path": "new_path_in_zip" // optional
             },
             {
-                "type": "zip",
-                "name": "test.zip",
-                "entries": [
+                "type": "zip",            // nested zip archive
+                "name": "test.zip",       // name of nested zip archive, can include directories
+                "entries": [              // array of entries for nested zip file, same format as above
                     "file",
                     "dir",
                     ...
