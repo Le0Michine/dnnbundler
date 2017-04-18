@@ -30,13 +30,13 @@ To configure packaging create a json config with the following schema:
             "path_to_file",
             "path_to_directory",          // real path in file system to file or directory
             {
-                "type": "file",           // type of entry
+                "type": "file",           // type of entry, if absent will be treated as 'file'
                 "name": "test.json",      // real path in file system to file or directory
                 "path": "new_path_in_zip" // optional
             },
             {
                 "type": "zip",            // nested zip archive
-                "name": "test.zip",       // name of nested zip archive, can include directories
+                "name": "test.zip",       // name of nested zip archive, can include directories. 'path' property is being ignored for this kind of entries
                 "ignoreEntries": [ ... ]  // local array of entries to ignore
                 "entries": [              // array of entries for nested zip file, same format as above
                     "file",
