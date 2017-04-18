@@ -15,6 +15,8 @@ module Dnnbundler
         # Zip the input directory.
         def write
             buffer = create_zip @entries, @ignore_entries
+
+            puts "\nwrite file #{@output_file}"
             File.open(@output_file, "wb") {|f| f.write buffer.string }
         end
 
