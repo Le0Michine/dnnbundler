@@ -25,34 +25,50 @@ Or install it yourself as:
 To configure packaging create a json config with the following schema:
 
     {
-        "name": "out.zip",
-        "entries": [
-            "path_to_file",
-            "path_to_directory",          // real path in file system to file or directory
+        "packages": [
             {
-                "type": "file",           // type of entry, if absent will be treated as 'file'
-                "name": "test.json",      // real path in file system to file or directory
-                "path": "new_path_in_zip" // optional
-            },
-            {
-                "type": "zip",            // nested zip archive
-                "name": "test.zip",       // name of nested zip archive, can include directories. 'path' property is being ignored for this kind of entries
-                "ignoreEntries": [ ... ]  // local array of entries to ignore
-                "entries": [              // array of entries for nested zip file, same format as above
-                    "file",
-                    "dir",
-                    ...
+                "name": "out.[PACKAGE_VERSION].zip", // [PACKAGE_VERSION] is a placeholder for package version which will be taken from manifest file
+                "entries": [
+                    "path_to_file",
+                    "path_to_directory",             // real path in file system to file or directory
+                    {
+                        "type": "file",              // type of entry, if absent will be treated as 'file'
+                        "name": "test.json",         // real path in file system to file or directory
+                        "path": "new_path_in_zip"    // optional
+                    },
+                    {
+                        "type": "zip",               // nested zip archive
+                        "name": "test.zip",          // name of nested zip archive, can include directories. 'path' property is being ignored for this kind of entries
+                        "ignoreEntries": [ ... ]     // local array of entries to ignore
+                        "entries": [                 // array of entries for nested zip file, same format as above
+                            "file",
+                            "dir",
+                            ...
+                        ]
+                    }
+                ],
+                "ignoreEntries": [
+                    ".DS_Store"
                 ]
             }
         ],
-        "ignoreEntries": [
-            ".DS_Store"
+        "manifests": [
+            "path_to_dnn_manifest"                   // dnn manifest file
         ]
     }
 
 to create package run:
 
-    dnnbundler path_to_config.json
+    dnnbundler build path_to_config.json
+
+it is possible to increment build or sprint numbers:
+
+    dnnbundler build path_to_config.json --bumpBuild
+    dnnbundler build path_to_config.json --bumpSprint
+
+it is also possible to specify custom version number:
+
+    dnnbundler build path_to_config.json --targetVersion 2017.08.0004
 
 ## Development
 
