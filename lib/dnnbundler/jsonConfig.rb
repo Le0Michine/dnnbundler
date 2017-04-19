@@ -6,5 +6,8 @@ module Dnnbundler
         Flatten = "flatten"
         Entries = "entries"
         IgnoreEntries = "ignoreEntries"
+        Packages = "packages"
+        Manifests = "manifests"
+        PackageVersionPlaceholder = "[PACKAGE_VERSION]"
     end
 end

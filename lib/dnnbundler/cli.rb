@@ -1,5 +1,6 @@
 require "dnnbundler/zipFileGenerator"
-require "dnnbundler/fileStringReplacer/fileStringReplacer"
+require "dnnbundler/packageVersionReplacer"
+require "dnnbundler/jsonConfig"
 require "thor"
 require "json"
 
@@ -12,23 +13,23 @@ module Dnnbundler
         def build( config )
             puts "Build with config #{config}"
             file = File.read(config)
-            data_hash = JSON.parse(file)
+            json_config = JSON.parse(file)
 
-            manifest_files = data_hash["manifests"]
+            manifest_files = json_config[JsonConfig::Manifests]
             current_version = Dnnbundler::getVersionFromManifest manifest_files[0]
-            version_numbers = current_version.split(".").map { |x| x.to_i }
+            version_numbers = Dnnbundler::splitVersionNumbers current_version
 
             version_numbers[1] = version_numbers[1] + 1 if options[:bumpSprint]
             version_numbers[2] = 1 if options[:bumpSprint]
             version_numbers[2] = version_numbers[2] + 1 if options[:bumpBuild]
-            version_numbers = options[:targetVersion].split(".").map { |x| x.to_i } if options[:targetVersion]
+            version_numbers = Dnnbundler::splitVersionNumbers(options[:targetVersion]) if options[:targetVersion]
 
             new_version = Dnnbundler::formatVersion(version_numbers)
             puts "current version is #{current_version}"
             puts "new version is #{new_version}"
 
-            data_hash["packages"].each do |package|
-                package["name"].sub! "[PACKAGE_VERSION]", new_version
+            json_config[JsonConfig::Packages].each do |package|
+                package[JsonConfig::Name].sub! JsonConfig::PackageVersionPlaceholder, new_version
                 Dnnbundler::replaceVersionInManifestFiles manifest_files, new_version
 
                 generator = ZipFileGenerator.new(package)
@@ -37,7 +38,17 @@ module Dnnbundler
         end
     end
 
+    # converts version numbers array into string <year>.<sprint>.<build>
+    # Params:
+    # +version+:: integer array: [year, sprint, build]
     def self.formatVersion(version)
         "#{version[0].to_s.rjust(4, "0")}.#{version[1].to_s.rjust(2, "0")}.#{version[2].to_s.rjust(4, "0")}"
+    end
+
+    # splits string version into integers
+    # Params:
+    # +version_string+:: string version, format is dot separated numbers <year>.<sprint>.<build>
+    def self.splitVersionNumbers(version_string)
+        version_string.split(".").map { |x| x.to_i }
     end
 end

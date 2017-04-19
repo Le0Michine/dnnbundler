@@ -5,14 +5,14 @@ require "zip"
 
 module Dnnbundler
     class ZipFileGenerator
-        # Initialize with the directory to zip and the location of the output archive.
+        # Initialize with the json config.
         def initialize(data)
             @entries = data[JsonConfig::Entries]
             @ignore_entries = data[JsonConfig::IgnoreEntries]
             @output_file = data[JsonConfig::Name]
         end
 
-        # Zip the input directory.
+        # Zip the input entrie.
         def write
             buffer = create_zip @entries, @ignore_entries
 
