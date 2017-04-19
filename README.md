@@ -40,11 +40,11 @@ To configure packaging create a json config with the following schema:
                     {
                         "type": "zip",               // nested zip archive
                         "name": "test.zip",          // name of nested zip archive, can include directories. 'path' property is being ignored for this kind of entries
-                        "ignoreEntries": [ ... ]     // local array of entries to ignore
+                        "ignoreEntries": [ ... ],    // local array of entries to ignore
                         "entries": [                 // array of entries for nested zip file, same format as above
                             "file",
                             "dir",
-                            ...
+                            "..."
                         ]
                     }
                 ],
