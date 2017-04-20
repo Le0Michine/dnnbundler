@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Le0Michine"]
   spec.email         = ["leomichine@gmail.com"]
 
-  spec.summary       = %q{Creates zip packages for DNN.}
-  spec.description   = %q{Creates zip packages with complex structure.}
+  spec.summary       = %q{Creates zip packages for DotNetNuke.}
+  spec.description   = %q{Creates zip packages for DotNetNuke.}
   spec.homepage      = "https://github.com/Le0Michine/dnnbundler"
   spec.license       = "MIT"
 
