@@ -1,8 +1,8 @@
-require "dnnbundler/zipFileGenerator"
 require "dnnbundler/packageVersionReplacer"
 require "dnnbundler/jsonConfig"
 require "thor"
 require "json"
+require "zipper"
 
 module Dnnbundler
     class CLI < Thor
@@ -29,10 +29,10 @@ module Dnnbundler
             puts "new version is #{new_version}"
 
             json_config[JsonConfig::Packages].each do |package|
-                package[JsonConfig::Name].sub! JsonConfig::PackageVersionPlaceholder, new_version
+                package[JsonConfig::Name].sub!(JsonConfig::PackageVersionPlaceholder, new_version)
                 Dnnbundler::replaceVersionInManifestFiles manifest_files, new_version
 
-                generator = ZipFileGenerator.new(package)
+                generator = Zipper::ZipFileGenerator.new(package)
                 generator.write
             end
         end
